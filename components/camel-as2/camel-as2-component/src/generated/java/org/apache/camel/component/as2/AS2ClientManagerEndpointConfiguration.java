@@ -31,15 +31,6 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
     private String dispositionNotificationTo;
 
     @UriParam
-    private String ediMessage;
-
-    @UriParam
-    private org.apache.http.entity.ContentType ediMessageContentType;
-
-    @UriParam
-    private String ediMessageTransferEncoding;
-
-    @UriParam
     private org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm;
 
     @UriParam
@@ -47,6 +38,15 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
 
     @UriParam
     private String from;
+
+    @UriParam
+    private String message;
+
+    @UriParam
+    private org.apache.http.entity.ContentType messageContentType;
+
+    @UriParam
+    private String messageTransferEncoding;
 
     @UriParam
     private String requestUri;
@@ -106,30 +106,6 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
         this.dispositionNotificationTo = dispositionNotificationTo;
     }
 
-    public String getEdiMessage() {
-        return ediMessage;
-    }
-
-    public void setEdiMessage(String ediMessage) {
-        this.ediMessage = ediMessage;
-    }
-
-    public org.apache.http.entity.ContentType getEdiMessageContentType() {
-        return ediMessageContentType;
-    }
-
-    public void setEdiMessageContentType(org.apache.http.entity.ContentType ediMessageContentType) {
-        this.ediMessageContentType = ediMessageContentType;
-    }
-
-    public String getEdiMessageTransferEncoding() {
-        return ediMessageTransferEncoding;
-    }
-
-    public void setEdiMessageTransferEncoding(String ediMessageTransferEncoding) {
-        this.ediMessageTransferEncoding = ediMessageTransferEncoding;
-    }
-
     public org.apache.camel.component.as2.api.AS2EncryptionAlgorithm getEncryptingAlgorithm() {
         return encryptingAlgorithm;
     }
@@ -152,6 +128,30 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
 
     public void setFrom(String from) {
         this.from = from;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public org.apache.http.entity.ContentType getMessageContentType() {
+        return messageContentType;
+    }
+
+    public void setMessageContentType(org.apache.http.entity.ContentType messageContentType) {
+        this.messageContentType = messageContentType;
+    }
+
+    public String getMessageTransferEncoding() {
+        return messageTransferEncoding;
+    }
+
+    public void setMessageTransferEncoding(String messageTransferEncoding) {
+        this.messageTransferEncoding = messageTransferEncoding;
     }
 
     public String getRequestUri() {

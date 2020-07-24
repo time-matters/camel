@@ -44,6 +44,7 @@ import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeEnvelopedDataEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationXMLEntity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.util.SigningUtils;
@@ -129,6 +130,40 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
             + "UNT+23+00000000000117'\n"
             + "UNZ+1+00000000000778'";
 
+    private static final String XML_MESSAGE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<breakfast_menu>\n" +
+            "  <food>\n" +
+            "    <name>Belgian Waffles</name>\n" +
+            "    <price>$5.95</price>\n" +
+            "    <description>Two of our famous Belgian Waffles with plenty of real maple syrup</description>\n" +
+            "    <calories>650</calories>\n" +
+            "  </food>\n" +
+            "  <food>\n" +
+            "    <name>Strawberry Belgian Waffles</name>\n" +
+            "    <price>$7.95</price>\n" +
+            "    <description>Light Belgian waffles covered with strawberries and whipped cream</description>\n" +
+            "    <calories>900</calories>\n" +
+            "  </food>\n" +
+            "  <food>\n" +
+            "    <name>Berry-Berry Belgian Waffles</name>\n" +
+            "    <price>$8.95</price>\n" +
+            "    <description>Light Belgian waffles covered with an assortment of fresh berries and whipped cream</description>\n" +
+            "    <calories>900</calories>\n" +
+            "  </food>\n" +
+            "  <food>\n" +
+            "    <name>French Toast</name>\n" +
+            "    <price>$4.50</price>\n" +
+            "    <description>Thick slices made from our homemade sourdough bread</description>\n" +
+            "    <calories>600</calories>\n" +
+            "  </food>\n" +
+            "  <food>\n" +
+            "    <name>Homestyle Breakfast</name>\n" +
+            "    <price>$6.95</price>\n" +
+            "    <description>Two eggs, bacon or sausage, toast, and our ever-popular hash browns</description>\n" +
+            "    <calories>950</calories>\n" +
+            "  </food>\n" +
+            "</breakfast_menu>\n";
+
     private static AS2SignedDataGenerator gen;
 
     private static KeyPair issueKP;
@@ -194,7 +229,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) entity;
         assertTrue(ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT), "Unexpected content type for entity");
         assertTrue(ediEntity.isMainBody(), "Entity not set as main body of request");
-        String rcvdMessage = ediEntity.getEdiMessage().replaceAll("\r", "");
+        String rcvdMessage = ediEntity.getMessage().replaceAll("\r", "");
         assertEquals(EDI_MESSAGE, rcvdMessage, "EDI message does not match");
 
         String rcvdMessageFromBody = message.getBody(String.class);
@@ -202,7 +237,63 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
     }
 
     @Test
-    public void receiveMultipartSignedMessageTest() throws Exception {
+    public void receivePlainXMLMessageTest() throws Exception {
+        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+        AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
+
+        clientManager.send(XML_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
+                ContentType.create(AS2MediaType.APPLICATION_XML, AS2Charset.US_ASCII), null, null, null, null,
+                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null);
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30,  TimeUnit.SECONDS));
+        mockEndpoint.assertIsSatisfied();
+
+        final List<Exchange> exchanges = mockEndpoint.getExchanges();
+        assertNotNull(exchanges, "listen result");
+        assertFalse(exchanges.isEmpty(), "listen result");
+        LOG.debug("poll result: " + exchanges);
+
+        Exchange exchange = exchanges.get(0);
+        Message message = exchange.getIn();
+        assertNotNull(message, "exchange message");
+
+        HttpCoreContext coreContext = exchange.getProperty(AS2Constants.AS2_INTERCHANGE, HttpCoreContext.class);
+        assertNotNull(coreContext, "context");
+        HttpRequest request = coreContext.getRequest();
+        assertNotNull(request, "request");
+        assertEquals(METHOD, request.getRequestLine().getMethod(), "Unexpected method value");
+        assertEquals(REQUEST_URI, request.getRequestLine().getUri(), "Unexpected request URI value");
+        assertEquals(HttpVersion.HTTP_1_1, request.getRequestLine().getProtocolVersion(), "Unexpected HTTP version value");
+        assertEquals(SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue(), "Unexpected subject value");
+        assertEquals(FROM, request.getFirstHeader(AS2Header.FROM).getValue(), "Unexpected from value");
+        assertEquals(AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue(), "Unexpected AS2 version value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue(), "Unexpected AS2 from value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
+        assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"), "Unexpected message id value");
+        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(), "Unexpected target host value");
+        assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
+        assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
+        assertNotNull(request.getFirstHeader(AS2Header.CONTENT_LENGTH), "Content length value missing");
+        assertTrue(request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MediaType.APPLICATION_XML), "Unexpected content type for message");
+
+        assertTrue(request instanceof BasicHttpEntityEnclosingRequest, "Request does not contain entity");
+        HttpEntity entity = ((BasicHttpEntityEnclosingRequest)request).getEntity();
+        assertNotNull(entity, "Request does not contain entity");
+        assertTrue(entity instanceof ApplicationXMLEntity, "Unexpected request entity type");
+        ApplicationXMLEntity xmlEntity = (ApplicationXMLEntity) entity;
+        assertTrue(xmlEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_XML), "Unexpected content type for entity");
+        assertTrue(xmlEntity.isMainBody(), "Entity not set as main body of request");
+        String rcvdMessage = xmlEntity.getMessage().replaceAll("\r", "");
+        assertEquals(XML_MESSAGE, rcvdMessage, "XML message does not match");
+
+        String rcvdMessageFromBody = message.getBody(String.class);
+        assertEquals(XML_MESSAGE.replaceAll("[\n\r]", ""), rcvdMessageFromBody.replaceAll("[\n\r]", ""), "XML message does not match");
+    }
+
+    @Test
+    public void receiveEDIMultipartSignedMessageTest() throws Exception {
 
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
@@ -273,7 +364,78 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
     }
 
     @Test
-    public void receiveEnvelopedMessageTest() throws Exception {
+    public void receiveXMLMultipartSignedMessageTest() throws Exception {
+
+        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+        AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
+
+        clientManager.send(XML_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED,
+                ContentType.create(AS2MediaType.APPLICATION_XML, AS2Charset.US_ASCII), null, AS2SignatureAlgorithm.SHA256WITHRSA,
+                certList.toArray(new Certificate[0]), signingKP.getPrivate(), null, DISPOSITION_NOTIFICATION_TO,
+                SIGNED_RECEIPT_MIC_ALGORITHMS, null, null);
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30,  TimeUnit.SECONDS));
+        mockEndpoint.assertIsSatisfied();
+
+        final List<Exchange> exchanges = mockEndpoint.getExchanges();
+        assertNotNull(exchanges, "listen result");
+        assertFalse(exchanges.isEmpty(), "listen result");
+        LOG.debug("poll result: " + exchanges);
+
+        Exchange exchange = exchanges.get(0);
+        Message message = exchange.getIn();
+        assertNotNull(message, "exchange message");
+        HttpCoreContext coreContext = exchange.getProperty(AS2Constants.AS2_INTERCHANGE, HttpCoreContext.class);
+        assertNotNull(coreContext, "context");
+        HttpRequest request = coreContext.getRequest();
+        assertNotNull(request, "request");
+        assertEquals(METHOD, request.getRequestLine().getMethod(), "Unexpected method value");
+        assertEquals(REQUEST_URI, request.getRequestLine().getUri(), "Unexpected request URI value");
+        assertEquals(HttpVersion.HTTP_1_1, request.getRequestLine().getProtocolVersion(), "Unexpected HTTP version value");
+
+        assertEquals(SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue(), "Unexpected subject value");
+        assertEquals(FROM, request.getFirstHeader(AS2Header.FROM).getValue(), "Unexpected from value");
+        assertEquals(AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue(), "Unexpected AS2 version value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue(), "Unexpected AS2 from value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
+        assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"), "Unexpected message id value");
+        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(), "Unexpected target host value");
+        assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
+        assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
+        assertNotNull(request.getFirstHeader(AS2Header.CONTENT_LENGTH), "Content length value missing");
+        assertTrue(request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MediaType.MULTIPART_SIGNED), "Unexpected content type for message");
+
+        assertTrue(request instanceof BasicHttpEntityEnclosingRequest, "Request does not contain entity");
+        HttpEntity entity = ((BasicHttpEntityEnclosingRequest)request).getEntity();
+        assertNotNull(entity, "Request does not contain entity");
+        assertTrue(entity instanceof MultipartSignedEntity, "Unexpected request entity type");
+        MultipartSignedEntity signedEntity = (MultipartSignedEntity)entity;
+        assertTrue(signedEntity.isMainBody(), "Entity not set as main body of request");
+        assertTrue(signedEntity.getPartCount() == 2, "Request contains invalid number of mime parts");
+
+        // Validated first mime part.
+        assertTrue(signedEntity.getPart(0) instanceof ApplicationXMLEntity, "First mime part incorrect type ");
+        ApplicationXMLEntity xmlEntity = (ApplicationXMLEntity) signedEntity.getPart(0);
+        assertTrue(xmlEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_XML), "Unexpected content type for first mime part");
+        assertFalse(xmlEntity.isMainBody(), "First mime type set as main body of request");
+
+        // Validate second mime part.
+        assertTrue(signedEntity.getPart(1) instanceof ApplicationPkcs7SignatureEntity, "Second mime part incorrect type ");
+        ApplicationPkcs7SignatureEntity signatureEntity = (ApplicationPkcs7SignatureEntity) signedEntity.getPart(1);
+        assertTrue(signatureEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_PKCS7_SIGNATURE), "Unexpected content type for second mime part");
+        assertFalse(signatureEntity.isMainBody(), "First mime type set as main body of request");
+
+        // Validate Signature
+        assertTrue(signedEntity.isValid(), "Signature is invalid");
+
+        String rcvdMessage = message.getBody(String.class);
+        assertEquals(XML_MESSAGE.replaceAll("[\n\r]", ""), rcvdMessage.replaceAll("[\n\r]", ""), "Unexpected content for enveloped mime part");
+    }
+
+    @Test
+    public void receiveEDIEnvelopedMessageTest() throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
@@ -326,10 +488,70 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) encryptedEntity;
         assertTrue(ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT), "Unexpected content type for enveloped mime part");
         assertFalse(ediEntity.isMainBody(), "Enveloped mime type set as main body of request");
-        assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), ediEntity.getEdiMessage().replaceAll("[\n\r]", ""), "Unexpected content for enveloped mime part");
+        assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), ediEntity.getMessage().replaceAll("[\n\r]", ""), "Unexpected content for enveloped mime part");
 
         String rcvdMessage = message.getBody(String.class);
         assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), rcvdMessage.replaceAll("[\n\r]", ""), "Unexpected content for enveloped mime part");
+    }
+
+    @Test
+    public void receiveXMLEnvelopedMessageTest() throws Exception {
+        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+        AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
+
+        clientManager.send(XML_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.ENCRYPTED,
+                ContentType.create(AS2MediaType.APPLICATION_XML, AS2Charset.US_ASCII), null, null, null, null,
+                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, AS2EncryptionAlgorithm.AES128_CBC, certList.toArray(new Certificate[0]));
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30,  TimeUnit.SECONDS));
+        mockEndpoint.assertIsSatisfied();
+
+        final List<Exchange> exchanges = mockEndpoint.getExchanges();
+        assertNotNull(exchanges, "listen result");
+        assertFalse(exchanges.isEmpty(), "listen result");
+        LOG.debug("poll result: " + exchanges);
+
+        Exchange exchange = exchanges.get(0);
+        Message message = exchange.getIn();
+        assertNotNull(message, "exchange message");
+        HttpCoreContext coreContext = exchange.getProperty(AS2Constants.AS2_INTERCHANGE, HttpCoreContext.class);
+        assertNotNull(coreContext, "context");
+        HttpRequest request = coreContext.getRequest();
+        assertNotNull(request, "request");
+        assertEquals(METHOD, request.getRequestLine().getMethod(), "Unexpected method value");
+        assertEquals(REQUEST_URI, request.getRequestLine().getUri(), "Unexpected request URI value");
+        assertEquals(HttpVersion.HTTP_1_1, request.getRequestLine().getProtocolVersion(), "Unexpected HTTP version value");
+        assertEquals(SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue(), "Unexpected subject value");
+        assertEquals(FROM, request.getFirstHeader(AS2Header.FROM).getValue(), "Unexpected from value");
+        assertEquals(AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue(), "Unexpected AS2 version value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue(), "Unexpected AS2 from value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
+        assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"), "Unexpected message id value");
+        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(), "Unexpected target host value");
+        assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
+        assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
+        assertNotNull(request.getFirstHeader(AS2Header.CONTENT_LENGTH), "Content length value missing");
+        assertTrue(request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME), "Unexpected content type for message");
+
+        assertTrue(request instanceof BasicHttpEntityEnclosingRequest, "Request does not contain entity");
+        HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
+        assertNotNull(entity, "Request does not contain entity");
+        assertTrue(entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity, "Unexpected request entity type");
+        ApplicationPkcs7MimeEnvelopedDataEntity envelopedEntity = (ApplicationPkcs7MimeEnvelopedDataEntity) entity;
+        assertTrue(envelopedEntity.isMainBody(), "Entity not set as main body of request");
+
+        // Validated enveloped part.
+        MimeEntity encryptedEntity = envelopedEntity.getEncryptedEntity(signingKP.getPrivate());
+        assertTrue(encryptedEntity instanceof ApplicationXMLEntity, "Enveloped mime part incorrect type ");
+        ApplicationXMLEntity ediEntity = (ApplicationXMLEntity) encryptedEntity;
+        assertTrue(ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_XML), "Unexpected content type for enveloped mime part");
+        assertFalse(ediEntity.isMainBody(), "Enveloped mime type set as main body of request");
+        assertEquals(XML_MESSAGE.replaceAll("[\n\r]", ""), ediEntity.getMessage().replaceAll("[\n\r]", ""), "Unexpected content for enveloped mime part");
+
+        String rcvdMessage = message.getBody(String.class);
+        assertEquals(XML_MESSAGE.replaceAll("[\n\r]", ""), rcvdMessage.replaceAll("[\n\r]", ""), "Unexpected content for enveloped mime part");
     }
 
     @Test

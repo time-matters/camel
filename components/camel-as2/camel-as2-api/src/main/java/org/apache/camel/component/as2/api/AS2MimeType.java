@@ -54,4 +54,18 @@ public interface AS2MimeType {
      */
     String MESSAGE_DISPOSITION_NOTIFICATION = "message/disposition-notification";
 
+    /**
+     * Mime Type for Application/XML
+     */
+    String APPLICATION_XML = "application/xml";
+
+    /**
+     * Mime Type for Binary Streams
+     */
+    String APPLICATION_OCTET_STREAM = "application/octet-stream";
+
+    /**
+     * Mime Type for Application/PDF
+     */
+    String APPLICATION_PDF = "application/pdf";
 }

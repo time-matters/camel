@@ -50,4 +50,19 @@ public interface AS2MediaType {
      * Media Type for Application/EDI-consent
      */
     String APPLICATION_EDI_CONSENT = "application/edi-consent";
+
+    /**
+     * Media Type for Application/XML
+     */
+    String APPLICATION_XML = "application/xml";
+
+    /**
+     * Media Type for Binary Streams
+     */
+    String APPLICATION_OCTET_STREAM = "application/octet-stream";
+
+    /**
+     * Media Type for Application/PDF
+     */
+    String APPLICATION_PDF = "application/pdf";
 }

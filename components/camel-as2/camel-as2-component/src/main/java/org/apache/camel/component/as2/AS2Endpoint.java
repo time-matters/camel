@@ -142,20 +142,20 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         configuration.setAs2MessageStructure(as2MessageStructure);
     }
 
-    public ContentType getEdiMessageType() {
-        return configuration.getEdiMessageType();
+    public ContentType getMessageType() {
+        return configuration.getMessageType();
     }
 
-    public void setEdiMessageContentType(ContentType ediMessageType) {
-        configuration.setEdiMessageType(ediMessageType);
+    public void setMessageType(ContentType messageType) {
+        configuration.setMessageType(messageType);
     }
 
-    public String getEdiMessageTransferEncoding() {
-        return configuration.getEdiMessageTransferEncoding();
+    public String getMessageTransferEncoding() {
+        return configuration.getMessageTransferEncoding();
     }
 
-    public void setEdiMessageTransferEncoding(String ediMessageTransferEncoding) {
-        configuration.setEdiMessageTransferEncoding(ediMessageTransferEncoding);
+    public void setMessageTransferEncoding(String messageTransferEncoding) {
+        configuration.setMessageTransferEncoding(messageTransferEncoding);
     }
 
     public AS2SignatureAlgorithm getSigningAlgorithm() {

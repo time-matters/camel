@@ -8,12 +8,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
-import org.apache.camel.component.as2.AS2Configuration;
 import org.apache.camel.component.as2.AS2ClientManagerEndpointConfiguration;
+import org.apache.camel.component.as2.AS2Configuration;
 import org.apache.camel.component.as2.AS2ServerManagerEndpointConfiguration;
-
 import org.apache.camel.support.component.ApiCollection;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodHelper;
@@ -33,7 +31,7 @@ public final class AS2ApiCollection extends ApiCollection<AS2ApiName, AS2Configu
         List<String> nullableArgs;
 
         aliases.clear();
-        nullableArgs = Arrays.asList("ediMessageTransferEncoding", "signingAlgorithm", "signingCertificateChain", "signingPrivateKey", "compressionAlgorithm", "dispositionNotificationTo", "signedReceiptMicAlgorithms", "encryptingAlgorithm", "encryptingCertificateChain");
+        nullableArgs = Arrays.asList("messageTransferEncoding", "signingAlgorithm", "signingCertificateChain", "signingPrivateKey", "compressionAlgorithm", "dispositionNotificationTo", "signedReceiptMicAlgorithms", "encryptingAlgorithm", "encryptingCertificateChain");
         apiHelpers.put(AS2ApiName.CLIENT, new ApiMethodHelper<AS2ClientManagerApiMethod>(AS2ClientManagerApiMethod.class, aliases, nullableArgs));
         apiMethods.put(AS2ClientManagerApiMethod.class, AS2ApiName.CLIENT);
 

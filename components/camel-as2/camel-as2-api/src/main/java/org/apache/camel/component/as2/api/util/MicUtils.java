@@ -92,7 +92,7 @@ public final class MicUtils {
             return null;
         }
 
-        HttpEntity entity = HttpMessageUtils.extractEdiPayload(request, decryptingPrivateKey);
+        HttpEntity entity = HttpMessageUtils.extractPayload(request, decryptingPrivateKey);
 
         byte[] content = EntityUtils.getContent(entity);
 

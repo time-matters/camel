@@ -46,10 +46,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "dispositionnotificationto":
         case "dispositionNotificationTo": target.getConfiguration().setDispositionNotificationTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "edimessagetransferencoding":
-        case "ediMessageTransferEncoding": target.getConfiguration().setEdiMessageTransferEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "edimessagetype":
-        case "ediMessageType": target.getConfiguration().setEdiMessageType(property(camelContext, org.apache.http.entity.ContentType.class, value)); return true;
         case "encryptingalgorithm":
         case "encryptingAlgorithm": target.getConfiguration().setEncryptingAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class, value)); return true;
         case "encryptingcertificatechain":
@@ -68,6 +64,10 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mdnmessagetemplate":
         case "mdnMessageTemplate": target.getConfiguration().setMdnMessageTemplate(property(camelContext, java.lang.String.class, value)); return true;
+        case "messagetransferencoding":
+        case "messageTransferEncoding": target.getConfiguration().setMessageTransferEncoding(property(camelContext, java.lang.String.class, value)); return true;
+        case "messagetype":
+        case "messageType": target.getConfiguration().setMessageType(property(camelContext, org.apache.http.entity.ContentType.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "repeatcount":
@@ -131,8 +131,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         answer.put("decryptingPrivateKey", java.security.PrivateKey.class);
         answer.put("delay", long.class);
         answer.put("dispositionNotificationTo", java.lang.String.class);
-        answer.put("ediMessageTransferEncoding", java.lang.String.class);
-        answer.put("ediMessageType", org.apache.http.entity.ContentType.class);
         answer.put("encryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
         answer.put("encryptingCertificateChain", java.security.cert.Certificate[].class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
@@ -143,6 +141,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         answer.put("initialDelay", long.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("mdnMessageTemplate", java.lang.String.class);
+        answer.put("messageTransferEncoding", java.lang.String.class);
+        answer.put("messageType", org.apache.http.entity.ContentType.class);
         answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
         answer.put("repeatCount", long.class);
         answer.put("requestUri", java.lang.String.class);
@@ -200,10 +200,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "delay": return target.getDelay();
         case "dispositionnotificationto":
         case "dispositionNotificationTo": return target.getConfiguration().getDispositionNotificationTo();
-        case "edimessagetransferencoding":
-        case "ediMessageTransferEncoding": return target.getConfiguration().getEdiMessageTransferEncoding();
-        case "edimessagetype":
-        case "ediMessageType": return target.getConfiguration().getEdiMessageType();
         case "encryptingalgorithm":
         case "encryptingAlgorithm": return target.getConfiguration().getEncryptingAlgorithm();
         case "encryptingcertificatechain":
@@ -222,6 +218,10 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "mdnmessagetemplate":
         case "mdnMessageTemplate": return target.getConfiguration().getMdnMessageTemplate();
+        case "messagetransferencoding":
+        case "messageTransferEncoding": return target.getConfiguration().getMessageTransferEncoding();
+        case "messagetype":
+        case "messageType": return target.getConfiguration().getMessageType();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "repeatcount":

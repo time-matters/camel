@@ -128,7 +128,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to compress EDI message.
+         * The algorithm used to compress the message.
          * 
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
@@ -141,7 +141,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to compress EDI message.
+         * The algorithm used to compress the message.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
@@ -154,7 +154,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to encrypt the EDI message.
+         * The key used to encrypt the the message.
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
@@ -166,7 +166,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to encrypt the EDI message.
+         * The key used to encrypt the the message.
          * 
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
@@ -193,45 +193,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The transfer encoding of EDI message.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointConsumerBuilder ediMessageTransferEncoding(
-                String ediMessageTransferEncoding) {
-            doSetProperty("ediMessageTransferEncoding", ediMessageTransferEncoding);
-            return this;
-        }
-        /**
-         * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent.
-         * 
-         * The option is a: <code>org.apache.http.entity.ContentType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointConsumerBuilder ediMessageType(Object ediMessageType) {
-            doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.entity.ContentType</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointConsumerBuilder ediMessageType(String ediMessageType) {
-            doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The algorithm used to encrypt EDI message.
+         * The algorithm used to encrypt the message.
          * 
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
@@ -244,7 +206,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to encrypt EDI message.
+         * The algorithm used to encrypt the message.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
@@ -257,7 +219,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The chain of certificates used to encrypt EDI message.
+         * The chain of certificates used to encrypt the message.
          * 
          * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
@@ -269,7 +231,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The chain of certificates used to encrypt EDI message.
+         * The chain of certificates used to encrypt the message.
          * 
          * The option will be converted to a
          * <code>java.security.cert.Certificate[]</code> type.
@@ -316,7 +278,45 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The request URI of EDI message.
+         * The transfer encoding of the message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AS2EndpointConsumerBuilder messageTransferEncoding(
+                String messageTransferEncoding) {
+            doSetProperty("messageTransferEncoding", messageTransferEncoding);
+            return this;
+        }
+        /**
+         * The content type of the message. One of application/edifact,
+         * application/edi-x12, application/edi-consent, application/xml.
+         * 
+         * The option is a: <code>org.apache.http.entity.ContentType</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AS2EndpointConsumerBuilder messageType(Object messageType) {
+            doSetProperty("messageType", messageType);
+            return this;
+        }
+        /**
+         * The content type of the message. One of application/edifact,
+         * application/edi-x12, application/edi-consent, application/xml.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.http.entity.ContentType</code> type.
+         * 
+         * Group: common
+         */
+        default AS2EndpointConsumerBuilder messageType(String messageType) {
+            doSetProperty("messageType", messageType);
+            return this;
+        }
+        /**
+         * The request URI.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -408,7 +408,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to sign EDI message.
+         * The algorithm used to sign the message.
          * 
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
@@ -422,7 +422,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to sign EDI message.
+         * The algorithm used to sign the message.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
@@ -436,7 +436,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The chain of certificates used to sign EDI message.
+         * The chain of certificates used to sign the message.
          * 
          * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
@@ -448,7 +448,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The chain of certificates used to sign EDI message.
+         * The chain of certificates used to sign the message.
          * 
          * The option will be converted to a
          * <code>java.security.cert.Certificate[]</code> type.
@@ -461,7 +461,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to sign the EDI message.
+         * The key used to sign the the message.
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
@@ -473,7 +473,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to sign the EDI message.
+         * The key used to sign the the message.
          * 
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
@@ -1227,7 +1227,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to compress EDI message.
+         * The algorithm used to compress the message.
          * 
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
@@ -1240,7 +1240,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to compress EDI message.
+         * The algorithm used to compress the message.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
@@ -1253,7 +1253,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to encrypt the EDI message.
+         * The key used to encrypt the the message.
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
@@ -1265,7 +1265,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to encrypt the EDI message.
+         * The key used to encrypt the the message.
          * 
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
@@ -1292,45 +1292,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The transfer encoding of EDI message.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointProducerBuilder ediMessageTransferEncoding(
-                String ediMessageTransferEncoding) {
-            doSetProperty("ediMessageTransferEncoding", ediMessageTransferEncoding);
-            return this;
-        }
-        /**
-         * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent.
-         * 
-         * The option is a: <code>org.apache.http.entity.ContentType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointProducerBuilder ediMessageType(Object ediMessageType) {
-            doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.entity.ContentType</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointProducerBuilder ediMessageType(String ediMessageType) {
-            doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The algorithm used to encrypt EDI message.
+         * The algorithm used to encrypt the message.
          * 
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
@@ -1343,7 +1305,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to encrypt EDI message.
+         * The algorithm used to encrypt the message.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
@@ -1356,7 +1318,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The chain of certificates used to encrypt EDI message.
+         * The chain of certificates used to encrypt the message.
          * 
          * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
@@ -1368,7 +1330,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The chain of certificates used to encrypt EDI message.
+         * The chain of certificates used to encrypt the message.
          * 
          * The option will be converted to a
          * <code>java.security.cert.Certificate[]</code> type.
@@ -1415,7 +1377,45 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The request URI of EDI message.
+         * The transfer encoding of the message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AS2EndpointProducerBuilder messageTransferEncoding(
+                String messageTransferEncoding) {
+            doSetProperty("messageTransferEncoding", messageTransferEncoding);
+            return this;
+        }
+        /**
+         * The content type of the message. One of application/edifact,
+         * application/edi-x12, application/edi-consent, application/xml.
+         * 
+         * The option is a: <code>org.apache.http.entity.ContentType</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AS2EndpointProducerBuilder messageType(Object messageType) {
+            doSetProperty("messageType", messageType);
+            return this;
+        }
+        /**
+         * The content type of the message. One of application/edifact,
+         * application/edi-x12, application/edi-consent, application/xml.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.http.entity.ContentType</code> type.
+         * 
+         * Group: common
+         */
+        default AS2EndpointProducerBuilder messageType(String messageType) {
+            doSetProperty("messageType", messageType);
+            return this;
+        }
+        /**
+         * The request URI.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1507,7 +1507,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to sign EDI message.
+         * The algorithm used to sign the message.
          * 
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
@@ -1521,7 +1521,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to sign EDI message.
+         * The algorithm used to sign the message.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
@@ -1535,7 +1535,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The chain of certificates used to sign EDI message.
+         * The chain of certificates used to sign the message.
          * 
          * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
@@ -1547,7 +1547,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The chain of certificates used to sign EDI message.
+         * The chain of certificates used to sign the message.
          * 
          * The option will be converted to a
          * <code>java.security.cert.Certificate[]</code> type.
@@ -1560,7 +1560,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to sign the EDI message.
+         * The key used to sign the the message.
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
@@ -1572,7 +1572,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to sign the EDI message.
+         * The key used to sign the the message.
          * 
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
@@ -1845,7 +1845,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to compress EDI message.
+         * The algorithm used to compress the message.
          * 
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
@@ -1858,7 +1858,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to compress EDI message.
+         * The algorithm used to compress the message.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
@@ -1871,7 +1871,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to encrypt the EDI message.
+         * The key used to encrypt the the message.
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
@@ -1883,7 +1883,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to encrypt the EDI message.
+         * The key used to encrypt the the message.
          * 
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
@@ -1910,45 +1910,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The transfer encoding of EDI message.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointBuilder ediMessageTransferEncoding(
-                String ediMessageTransferEncoding) {
-            doSetProperty("ediMessageTransferEncoding", ediMessageTransferEncoding);
-            return this;
-        }
-        /**
-         * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent.
-         * 
-         * The option is a: <code>org.apache.http.entity.ContentType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointBuilder ediMessageType(Object ediMessageType) {
-            doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.entity.ContentType</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointBuilder ediMessageType(String ediMessageType) {
-            doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The algorithm used to encrypt EDI message.
+         * The algorithm used to encrypt the message.
          * 
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
@@ -1961,7 +1923,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to encrypt EDI message.
+         * The algorithm used to encrypt the message.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
@@ -1974,7 +1936,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The chain of certificates used to encrypt EDI message.
+         * The chain of certificates used to encrypt the message.
          * 
          * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
@@ -1986,7 +1948,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The chain of certificates used to encrypt EDI message.
+         * The chain of certificates used to encrypt the message.
          * 
          * The option will be converted to a
          * <code>java.security.cert.Certificate[]</code> type.
@@ -2032,7 +1994,45 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The request URI of EDI message.
+         * The transfer encoding of the message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AS2EndpointBuilder messageTransferEncoding(
+                String messageTransferEncoding) {
+            doSetProperty("messageTransferEncoding", messageTransferEncoding);
+            return this;
+        }
+        /**
+         * The content type of the message. One of application/edifact,
+         * application/edi-x12, application/edi-consent, application/xml.
+         * 
+         * The option is a: <code>org.apache.http.entity.ContentType</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AS2EndpointBuilder messageType(Object messageType) {
+            doSetProperty("messageType", messageType);
+            return this;
+        }
+        /**
+         * The content type of the message. One of application/edifact,
+         * application/edi-x12, application/edi-consent, application/xml.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.http.entity.ContentType</code> type.
+         * 
+         * Group: common
+         */
+        default AS2EndpointBuilder messageType(String messageType) {
+            doSetProperty("messageType", messageType);
+            return this;
+        }
+        /**
+         * The request URI.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2122,7 +2122,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to sign EDI message.
+         * The algorithm used to sign the message.
          * 
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
@@ -2136,7 +2136,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The algorithm used to sign EDI message.
+         * The algorithm used to sign the message.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
@@ -2149,7 +2149,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The chain of certificates used to sign EDI message.
+         * The chain of certificates used to sign the message.
          * 
          * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
@@ -2161,7 +2161,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The chain of certificates used to sign EDI message.
+         * The chain of certificates used to sign the message.
          * 
          * The option will be converted to a
          * <code>java.security.cert.Certificate[]</code> type.
@@ -2174,7 +2174,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to sign the EDI message.
+         * The key used to sign the the message.
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
@@ -2186,7 +2186,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to sign the EDI message.
+         * The key used to sign the the message.
          * 
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.

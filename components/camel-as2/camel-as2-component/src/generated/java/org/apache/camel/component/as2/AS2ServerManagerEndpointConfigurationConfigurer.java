@@ -37,10 +37,6 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "DecryptingPrivateKey": target.setDecryptingPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
         case "dispositionnotificationto":
         case "DispositionNotificationTo": target.setDispositionNotificationTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "edimessagetransferencoding":
-        case "EdiMessageTransferEncoding": target.setEdiMessageTransferEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "edimessagetype":
-        case "EdiMessageType": target.setEdiMessageType(property(camelContext, org.apache.http.entity.ContentType.class, value)); return true;
         case "encryptingalgorithm":
         case "EncryptingAlgorithm": target.setEncryptingAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class, value)); return true;
         case "encryptingcertificatechain":
@@ -49,6 +45,10 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "From": target.setFrom(property(camelContext, java.lang.String.class, value)); return true;
         case "mdnmessagetemplate":
         case "MdnMessageTemplate": target.setMdnMessageTemplate(property(camelContext, java.lang.String.class, value)); return true;
+        case "messagetransferencoding":
+        case "MessageTransferEncoding": target.setMessageTransferEncoding(property(camelContext, java.lang.String.class, value)); return true;
+        case "messagetype":
+        case "MessageType": target.setMessageType(property(camelContext, org.apache.http.entity.ContentType.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "requesturi":
@@ -93,12 +93,12 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         answer.put("CompressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
         answer.put("DecryptingPrivateKey", java.security.PrivateKey.class);
         answer.put("DispositionNotificationTo", java.lang.String.class);
-        answer.put("EdiMessageTransferEncoding", java.lang.String.class);
-        answer.put("EdiMessageType", org.apache.http.entity.ContentType.class);
         answer.put("EncryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
         answer.put("EncryptingCertificateChain", java.security.cert.Certificate[].class);
         answer.put("From", java.lang.String.class);
         answer.put("MdnMessageTemplate", java.lang.String.class);
+        answer.put("MessageTransferEncoding", java.lang.String.class);
+        answer.put("MessageType", org.apache.http.entity.ContentType.class);
         answer.put("MethodName", java.lang.String.class);
         answer.put("RequestUri", java.lang.String.class);
         answer.put("RequestUriPattern", java.lang.String.class);
@@ -138,10 +138,6 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "DecryptingPrivateKey": return target.getDecryptingPrivateKey();
         case "dispositionnotificationto":
         case "DispositionNotificationTo": return target.getDispositionNotificationTo();
-        case "edimessagetransferencoding":
-        case "EdiMessageTransferEncoding": return target.getEdiMessageTransferEncoding();
-        case "edimessagetype":
-        case "EdiMessageType": return target.getEdiMessageType();
         case "encryptingalgorithm":
         case "EncryptingAlgorithm": return target.getEncryptingAlgorithm();
         case "encryptingcertificatechain":
@@ -150,6 +146,10 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "From": return target.getFrom();
         case "mdnmessagetemplate":
         case "MdnMessageTemplate": return target.getMdnMessageTemplate();
+        case "messagetransferencoding":
+        case "MessageTransferEncoding": return target.getMessageTransferEncoding();
+        case "messagetype":
+        case "MessageType": return target.getMessageType();
         case "methodname":
         case "MethodName": return target.getMethodName();
         case "requesturi":

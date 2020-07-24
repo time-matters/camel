@@ -21,6 +21,7 @@ import java.security.PrivateKey;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeCompressedDataEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeEnvelopedDataEntity;
 import org.apache.camel.component.as2.api.entity.EntityParser;
@@ -125,7 +126,7 @@ public final class HttpMessageUtils {
         return null;
     }
 
-    public static ApplicationEDIEntity extractEdiPayload(HttpMessage message, PrivateKey privateKey) throws HttpException {
+    public static ApplicationEntity<?> extractPayload(HttpMessage message, PrivateKey privateKey) throws HttpException {
 
         String contentTypeString = getHeaderValue(message, AS2Header.CONTENT_TYPE);
         if (contentTypeString == null) {
@@ -134,20 +135,21 @@ public final class HttpMessageUtils {
         ContentType contentType = ContentType.parse(contentTypeString);
 
         EntityParser.parseAS2MessageEntity(message);
-        ApplicationEDIEntity ediEntity = null;
+        ApplicationEntity<?> ediEntity = null;
         switch (contentType.getMimeType().toLowerCase()) {
             case AS2MimeType.APPLICATION_EDIFACT:
             case AS2MimeType.APPLICATION_EDI_X12:
-            case AS2MimeType.APPLICATION_EDI_CONSENT: {
-                ediEntity = getEntity(message, ApplicationEDIEntity.class);
+            case AS2MimeType.APPLICATION_EDI_CONSENT:
+            case AS2MimeType.APPLICATION_XML: {
+                ediEntity = getEntity(message, ApplicationEntity.class);
                 break;
             }
             case AS2MimeType.MULTIPART_SIGNED: {
                 MultipartSignedEntity multipartSignedEntity = getEntity(message,
                         MultipartSignedEntity.class);
                 MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
-                if (mimeEntity instanceof ApplicationEDIEntity) {
-                    ediEntity = (ApplicationEDIEntity) mimeEntity;
+                if (mimeEntity instanceof ApplicationEntity) {
+                    ediEntity = (ApplicationEntity<?>) mimeEntity;
                 } else {
                     throw new HttpException("Failed to extract EDI payload: invalid content type '" + mimeEntity.getContentTypeValue() + "' for AS2 compressed and signed message");
                 }
@@ -157,7 +159,7 @@ public final class HttpMessageUtils {
                 switch(contentType.getParameter("smime-type")) {
                     case "compressed-data": {
                         ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity = getEntity(message, ApplicationPkcs7MimeCompressedDataEntity.class);
-                        ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity);
+                        ediEntity = extractPayloadFromCompressedEntity(compressedDataEntity);
                         break;
                     }
                     case "enveloped-data": {
@@ -165,7 +167,7 @@ public final class HttpMessageUtils {
                             throw new HttpException("Failed to extract EDI payload: private key can not be null for AS2 enveloped message");
                         }
                         ApplicationPkcs7MimeEnvelopedDataEntity envelopedDataEntity = getEntity(message, ApplicationPkcs7MimeEnvelopedDataEntity.class);
-                        ediEntity = extractEdiPayloadFromEnvelopedEntity(envelopedDataEntity, privateKey);
+                        ediEntity = extractPayloadFromEnvelopedEntity(envelopedDataEntity, privateKey);
                         break;
                     }
                     default:
@@ -181,8 +183,8 @@ public final class HttpMessageUtils {
 
     }
 
-    private static ApplicationEDIEntity extractEdiPayloadFromEnvelopedEntity(ApplicationPkcs7MimeEnvelopedDataEntity envelopedDataEntity, PrivateKey privateKey) throws HttpException {
-        ApplicationEDIEntity ediEntity = null;
+    private static ApplicationEntity extractPayloadFromEnvelopedEntity(ApplicationPkcs7MimeEnvelopedDataEntity envelopedDataEntity, PrivateKey privateKey) throws HttpException {
+        ApplicationEntity applicationEntity = null;
 
         MimeEntity entity = envelopedDataEntity.getEncryptedEntity(privateKey);
         String contentTypeString = entity.getContentTypeValue();
@@ -194,69 +196,71 @@ public final class HttpMessageUtils {
         switch(contentType.getMimeType().toLowerCase()) {
             case AS2MimeType.APPLICATION_EDIFACT:
             case AS2MimeType.APPLICATION_EDI_X12:
-            case AS2MimeType.APPLICATION_EDI_CONSENT: {
-                ediEntity = (ApplicationEDIEntity) entity;
+            case AS2MimeType.APPLICATION_EDI_CONSENT:
+            case AS2MimeType.APPLICATION_XML: {
+                applicationEntity = (ApplicationEntity) entity;
                 break;
             }
             case AS2MimeType.MULTIPART_SIGNED: {
                 MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity) entity;
                 MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
                 if (mimeEntity instanceof ApplicationEDIEntity) {
-                    ediEntity = (ApplicationEDIEntity) mimeEntity;
+                    applicationEntity = (ApplicationEDIEntity) mimeEntity;
                 } else {
 
-                    throw new HttpException("Failed to extract EDI payload: invalid content type '" + mimeEntity.getContentTypeValue() + "' for AS2 compressed and signed entity");
+                    throw new HttpException("Failed to extract payload: invalid content type '" + mimeEntity.getContentTypeValue() + "' for AS2 compressed and signed entity");
                 }
                 break;
             }
             case AS2MimeType.APPLICATION_PKCS7_MIME: {
                 if (!"compressed-data".equals(contentType.getParameter("smime-type"))) {
-                    throw new HttpException("Failed to extract EDI payload: invalid mime type '" + contentType.getParameter("smime-type") + "' for AS2 enveloped entity");
+                    throw new HttpException("Failed to extract payload: invalid mime type '" + contentType.getParameter("smime-type") + "' for AS2 enveloped entity");
                 }
                 ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity = (ApplicationPkcs7MimeCompressedDataEntity) entity;
-                ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity);
+                applicationEntity = extractPayloadFromCompressedEntity(compressedDataEntity);
                 break;
             }
             default:
-                throw new HttpException("Failed to extract EDI payload: invalid content type '" + contentType.getMimeType() + "' for AS2 enveloped entity");
+                throw new HttpException("Failed to extract payload: invalid content type '" + contentType.getMimeType() + "' for AS2 enveloped entity");
         }
 
-        return ediEntity;
+        return applicationEntity;
     }
 
-    public static ApplicationEDIEntity extractEdiPayloadFromCompressedEntity(ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity) throws HttpException {
-        ApplicationEDIEntity ediEntity = null;
+    public static ApplicationEntity<?> extractPayloadFromCompressedEntity(ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity) throws HttpException {
+        ApplicationEntity<?> applicationEntity = null;
 
         MimeEntity entity = compressedDataEntity.getCompressedEntity(new ZlibExpanderProvider());
         String contentTypeString = entity.getContentTypeValue();
         if (contentTypeString == null) {
-            throw new HttpException("Failed to extract EDI payload: content type missing from compressed entity");
+            throw new HttpException("Failed to extract payload: content type missing from compressed entity");
         }
         ContentType contentType = ContentType.parse(contentTypeString);
 
         switch(contentType.getMimeType().toLowerCase()) {
             case AS2MimeType.APPLICATION_EDIFACT:
             case AS2MimeType.APPLICATION_EDI_X12:
-            case AS2MimeType.APPLICATION_EDI_CONSENT: {
-                ediEntity = (ApplicationEDIEntity) entity;
+            case AS2MimeType.APPLICATION_EDI_CONSENT:
+            case AS2MimeType.APPLICATION_XML: {
+                applicationEntity = (ApplicationEntity<?>) entity;
                 break;
             }
             case AS2MimeType.MULTIPART_SIGNED: {
                 MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity) entity;
                 MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
                 if (mimeEntity instanceof ApplicationEDIEntity) {
-                    ediEntity = (ApplicationEDIEntity) mimeEntity;
+                    applicationEntity = (ApplicationEDIEntity) mimeEntity;
                 } else {
 
-                    throw new HttpException("Failed to extract EDI payload: invalid content type '" + mimeEntity.getContentTypeValue() + "' for AS2 compressed and signed entity");
+                    throw new HttpException("Failed to extract payload: invalid content type '" + mimeEntity.getContentTypeValue() + "' for AS2 compressed and signed entity");
                 }
                 break;
             }
             default:
-                throw new HttpException("Failed to extract EDI payload: invalid content type '" + contentType.getMimeType() + "' for AS2 compressed entity");
+                throw new HttpException("Failed to extract payload: invalid content type '" + contentType.getMimeType() + "' for AS2 compressed entity");
         }
 
-        return ediEntity;
+        return applicationEntity;
     }
 
 }

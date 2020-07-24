@@ -25,29 +25,19 @@ import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.entity.ContentType;
-import org.apache.http.util.Args;
 
-public abstract class ApplicationEDIEntity extends MimeEntity {
-
-    private final String ediMessage;
+public abstract class ApplicationEDIEntity extends ApplicationEntity<String> {
 
     protected ApplicationEDIEntity(String ediMessage, ContentType contentType, String contentTransferEncoding, boolean isMainBody) {
-        this.ediMessage = Args.notNull(ediMessage, "EDI Message");
-        setContentType(Args.notNull(contentType, "Content Type").toString());
-        setContentTransferEncoding(contentTransferEncoding);
-        setMainBody(isMainBody);
+        super(ediMessage, contentType, contentTransferEncoding, isMainBody);
     }
-
-    public String getEdiMessage() {
-        return ediMessage;
-    }
-
 
     @Override
-    public void writeTo(OutputStream outstream) throws IOException {
+    public void writeTo(OutputStream outstream) throws IOException
+    {
         NoCloseOutputStream ncos = new NoCloseOutputStream(outstream);
         try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, AS2Charset.US_ASCII);
-            OutputStream transferEncodedStream = EntityUtils.encode(canonicalOutstream, getContentTransferEncodingValue())) {
+             OutputStream transferEncodedStream = EntityUtils.encode(canonicalOutstream, getContentTransferEncodingValue())) {
 
             // Write out mime part headers if this is not the main body of message.
             if (!isMainBody()) {
@@ -59,7 +49,8 @@ public abstract class ApplicationEDIEntity extends MimeEntity {
                 canonicalOutstream.writeln(); // ensure empty line between headers and body; RFC2046 - 5.1.1
             }
 
-            transferEncodedStream.write(ediMessage.getBytes(getCharset()), 0, ediMessage.length());
+            String message = getMessage();
+            transferEncodedStream.write(message.getBytes(getCharset()), 0, message.length());
         } catch (Exception e) {
             throw new IOException("Failed to write to output stream", e);
         }

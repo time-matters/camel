@@ -116,7 +116,7 @@
                                         </excludeMethods>
                                     </fromJavadoc>
                                     <nullableOptions>
-                                        <nullableOption>ediMessageTransferEncoding</nullableOption>
+                                        <nullableOption>messageTransferEncoding</nullableOption>
                                         <nullableOption>signingAlgorithm</nullableOption>
                                         <nullableOption>signingCertificateChain</nullableOption>
                                         <nullableOption>signingPrivateKey</nullableOption>

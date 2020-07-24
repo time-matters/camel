@@ -75,10 +75,10 @@ public class AS2Configuration {
     private String requestUri = "/";
 
     @UriParam
-    private ContentType ediMessageType;
+    private ContentType messageType;
 
     @UriParam
-    private String ediMessageTransferEncoding;
+    private String messageTransferEncoding;
 
     @UriParam
     private AS2MessageStructure as2MessageStructure;
@@ -257,33 +257,33 @@ public class AS2Configuration {
     }
 
     /**
-     * The request URI of EDI message.
+     * The request URI.
      */
     public void setRequestUri(String requestUri) {
         this.requestUri = requestUri;
     }
 
-    public ContentType getEdiMessageType() {
-        return ediMessageType;
+    public ContentType getMessageType() {
+        return messageType;
     }
 
     /**
-     * The content type of EDI message.
-     * One of application/edifact, application/edi-x12, application/edi-consent
+     * The content type of the message.
+     * One of application/edifact, application/edi-x12, application/edi-consent, application/xml
      */
-    public void setEdiMessageType(ContentType ediMessageType) {
-        this.ediMessageType = ediMessageType;
+    public void setMessageType(ContentType messageType) {
+        this.messageType = messageType;
     }
 
-    public String getEdiMessageTransferEncoding() {
-        return ediMessageTransferEncoding;
+    public String getMessageTransferEncoding() {
+        return messageTransferEncoding;
     }
 
     /**
-     * The transfer encoding of EDI message.
+     * The transfer encoding of the message.
      */
-    public void setEdiMessageTransferEncoding(String ediMessageTransferEncoding) {
-        this.ediMessageTransferEncoding = ediMessageTransferEncoding;
+    public void setMessageTransferEncoding(String messageTransferEncoding) {
+        this.messageTransferEncoding = messageTransferEncoding;
     }
 
     public AS2MessageStructure getAs2MessageStructure() {
@@ -350,7 +350,7 @@ public class AS2Configuration {
     }
 
     /**
-     * The algorithm used to sign EDI message.
+     * The algorithm used to sign the message.
      */
     public void setSigningAlgorithm(AS2SignatureAlgorithm signingAlgorithm) {
         this.signingAlgorithm = signingAlgorithm;
@@ -361,7 +361,7 @@ public class AS2Configuration {
     }
 
     /**
-     * The chain of certificates used to sign EDI message.
+     * The chain of certificates used to sign the message.
      */
     public void setSigningCertificateChain(Certificate[] signingCertificateChain) {
         this.signingCertificateChain = signingCertificateChain;
@@ -372,7 +372,7 @@ public class AS2Configuration {
     }
 
     /**
-     * The key used to sign the EDI message.
+     * The key used to sign the the message.
      */
     public void setSigningPrivateKey(PrivateKey signingPrivateKey) {
         this.signingPrivateKey = signingPrivateKey;
@@ -383,7 +383,7 @@ public class AS2Configuration {
     }
 
     /**
-     * The algorithm used to compress EDI message.
+     * The algorithm used to compress the message.
      */
     public void setCompressionAlgorithm(AS2CompressionAlgorithm compressionAlgorithm) {
         this.compressionAlgorithm = compressionAlgorithm;
@@ -421,7 +421,7 @@ public class AS2Configuration {
     }
 
     /**
-     * The algorithm used to encrypt EDI message.
+     * The algorithm used to encrypt the message.
      */
     public void setEncryptingAlgorithm(AS2EncryptionAlgorithm encryptingAlgorithm) {
         this.encryptingAlgorithm = encryptingAlgorithm;
@@ -432,7 +432,7 @@ public class AS2Configuration {
     }
 
     /**
-     * The chain of certificates used to encrypt EDI message.
+     * The chain of certificates used to encrypt the message.
      */
     public void setEncryptingCertificateChain(Certificate[] signingCertificateChain) {
         this.encryptingCertificateChain = signingCertificateChain;
@@ -443,7 +443,7 @@ public class AS2Configuration {
     }
 
     /**
-     * The key used to encrypt the EDI message.
+     * The key used to encrypt the the message.
      */
     public void setDecryptingPrivateKey(PrivateKey signingPrivateKey) {
         this.decryptingPrivateKey = signingPrivateKey;
