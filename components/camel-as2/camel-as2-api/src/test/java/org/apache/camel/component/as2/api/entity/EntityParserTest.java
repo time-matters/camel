@@ -324,6 +324,22 @@ public class EntityParserTest {
         assertEquals("This is a super secret messatge!", ((TextPlainEntity)decryptedMimeEntity).getText(), "Decrypted entity has unexpected content");
     }
 
+    @Test
+    void parsePlainBinaryData() throws IOException
+    {
+        byte[] smallBuffer = new byte[DEFAULT_BUFFER_SIZE * 3 / 8];
+        byte[] bigBuffer = new byte[DEFAULT_BUFFER_SIZE * 3];
+
+        AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE, null);
+        inbuffer.bind(new ByteArrayInputStream(smallBuffer));
+        byte[] actual = EntityParser.parseBodyPartBinary(inbuffer, null);
+        assertArrayEquals(smallBuffer, actual);
+
+        inbuffer.bind(new ByteArrayInputStream(bigBuffer));
+        actual = EntityParser.parseBodyPartBinary(inbuffer, null);
+        assertArrayEquals(bigBuffer, actual);
+    }
+
     /**
      * create a basic X509 certificate from the given keys
      */

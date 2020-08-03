@@ -40,7 +40,7 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
     private String from;
 
     @UriParam
-    private String message;
+    private Object message;
 
     @UriParam
     private org.apache.http.entity.ContentType messageContentType;
@@ -130,11 +130,11 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
         this.from = from;
     }
 
-    public String getMessage() {
+    public Object getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(Object message) {
         this.message = message;
     }
 

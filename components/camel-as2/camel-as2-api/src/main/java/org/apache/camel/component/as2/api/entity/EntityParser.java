@@ -50,6 +50,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.message.LineParser;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.util.Args;
+import org.apache.http.util.ByteArrayBuffer;
 import org.apache.http.util.CharArrayBuffer;
 import org.bouncycastle.cms.CMSCompressedData;
 import org.bouncycastle.cms.CMSEnvelopedData;
@@ -450,6 +451,10 @@ public final class EntityParser {
                     case AS2MimeType.APPLICATION_XML:
                         parseApplicationEntity(message, inBuffer, contentType, contentTransferEncoding);
                         break;
+                    case AS2MimeType.APPLICATION_OCTET_STREAM:
+                    case AS2MimeType.APPLICATION_PDF:
+                        parseBinaryEntity(message, inBuffer, contentType, contentTransferEncoding);
+                        break;
                     case AS2MimeType.MULTIPART_SIGNED:
                         parseMultipartSignedEntity(message, inBuffer, boundary, charsetName, contentTransferEncoding);
                         break;
@@ -476,6 +481,40 @@ public final class EntityParser {
                 throw new HttpException("Failed to parse entity content", e);
             }
         }
+    }
+
+    private static void parseBinaryEntity(HttpMessage message, AS2SessionInputBuffer inBuffer, ContentType contentType, String contentTransferEncoding) throws HttpException
+    {
+
+        Args.notNull(message, "message");
+        Args.notNull(inBuffer, "inBuffer");
+
+        HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
+
+        if (entity instanceof ApplicationEntity) {
+            // already parsed
+            return;
+        }
+
+        Args.check(entity.isStreaming(), "Message entity can not be parsed: entity is not streaming");
+
+        try {
+
+            ApplicationEntity<?> applicationEDIEntity = parseEntityBinaryBody(inBuffer, contentType, contentTransferEncoding);
+            applicationEDIEntity.setMainBody(true);
+            EntityUtils.setMessageEntity(message, applicationEDIEntity);
+
+        } catch (Exception e) {
+            throw new HttpException("Failed to parse entity content", e);
+        }
+    }
+
+    private static ApplicationEntity<?> parseEntityBinaryBody(AS2SessionInputBuffer inBuffer, ContentType contentType, String contentTransferEncoding) throws Exception
+    {
+        byte[] messageBodyPartContent = parseBodyPartBinary(inBuffer, null);
+
+        return EntityUtils.createEntity(messageBodyPartContent,
+                contentType, contentTransferEncoding, false);
     }
 
     public static MultipartSignedEntity parseMultipartSignedEntityBody(AS2SessionInputBuffer inbuffer,
@@ -776,6 +815,10 @@ public final class EntityParser {
                 case AS2MimeType.APPLICATION_XML:
                     entity = parseEntityBody(inbuffer, boundary, entityContentType, contentTransferEncoding);
                     break;
+                case AS2MimeType.APPLICATION_PDF:
+                case AS2MimeType.APPLICATION_OCTET_STREAM:
+                    entity = parseEntityBinaryBody(inbuffer, entityContentType, contentTransferEncoding);
+                    break;
                 case AS2MimeType.MULTIPART_SIGNED:
                     String multipartSignedBoundary = AS2HeaderUtils.getParameterValue(headers,
                             AS2Header.CONTENT_TYPE, "boundary");
@@ -990,6 +1033,26 @@ public final class EntityParser {
         }
 
         return buffer.toString();
+    }
+
+    public static byte[] parseBodyPartBinary(final AS2SessionInputBuffer inbuffer,
+                                           final String boundary)
+            throws IOException {
+
+        ByteArrayBuffer byteArrayBuffer = new ByteArrayBuffer(DEFAULT_BUFFER_SIZE);
+        int offset = 0;
+        while (true) {
+            final int l = inbuffer.fillBuffer();
+            if (l == -1) {
+                break;
+            }
+
+            byte[] tmp = new byte[l];
+            inbuffer.read(tmp);
+            byteArrayBuffer.append(tmp, offset, l);
+        }
+
+        return byteArrayBuffer.toByteArray();
     }
 
     public static List<CharArrayBuffer> parseBodyPartFields(final AS2SessionInputBuffer inbuffer,

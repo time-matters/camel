@@ -23,6 +23,7 @@ import java.net.UnknownHostException;
 import org.apache.camel.component.as2.api.io.AS2BHttpClientConnection;
 import org.apache.camel.component.as2.api.protocol.RequestAS2;
 import org.apache.camel.component.as2.api.protocol.RequestMDN;
+import org.apache.camel.component.as2.api.util.AS2Utils;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -39,6 +40,8 @@ import org.apache.http.protocol.RequestExpectContinue;
 import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
 import org.apache.http.util.Args;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AS2ClientConnection {
 
@@ -48,6 +51,8 @@ public class AS2ClientConnection {
     private String as2Version;
     private String userAgent;
     private String clientFqdn;
+
+    private static final Logger LOG = LoggerFactory.getLogger(AS2ClientConnection.class);
 
     public AS2ClientConnection(String as2Version, String userAgent, String clientFqdn, String targetHostName, Integer targetPortNumber) throws UnknownHostException, IOException {
 
@@ -90,6 +95,8 @@ public class AS2ClientConnection {
     public HttpResponse send(HttpRequest request, HttpCoreContext httpContext) throws HttpException, IOException {
 
         httpContext.setTargetHost(targetHost);
+
+        LOG.debug(AS2Utils.printMessage(request));
 
         // Execute Request
         HttpRequestExecutor httpexecutor = new HttpRequestExecutor();

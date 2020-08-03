@@ -46,7 +46,7 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "mdnmessagetemplate":
         case "MdnMessageTemplate": target.setMdnMessageTemplate(property(camelContext, java.lang.String.class, value)); return true;
         case "message":
-        case "Message": target.setMessage(property(camelContext, java.lang.String.class, value)); return true;
+        case "Message": target.setMessage(property(camelContext, java.lang.Object.class, value)); return true;
         case "messagecontenttype":
         case "MessageContentType": target.setMessageContentType(property(camelContext, org.apache.http.entity.ContentType.class, value)); return true;
         case "messagetransferencoding":
@@ -99,7 +99,7 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         answer.put("EncryptingCertificateChain", java.security.cert.Certificate[].class);
         answer.put("From", java.lang.String.class);
         answer.put("MdnMessageTemplate", java.lang.String.class);
-        answer.put("Message", java.lang.String.class);
+        answer.put("Message", java.lang.Object.class);
         answer.put("MessageContentType", org.apache.http.entity.ContentType.class);
         answer.put("MessageTransferEncoding", java.lang.String.class);
         answer.put("MessageType", org.apache.http.entity.ContentType.class);

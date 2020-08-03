@@ -199,7 +199,7 @@ public class AS2ClientManager {
      * @return {@link HttpCoreContext} containing request and response used to send the message
      * @throws HttpException when things go wrong.
      */
-    public HttpCoreContext send(String message,
+    public HttpCoreContext send(Object message,
                                 String requestUri,
                                 String subject,
                                 String from,
@@ -250,12 +250,7 @@ public class AS2ClientManager {
         httpContext.setAttribute(HTTP_REQUEST, request);
 
         // Create Message Body
-        ApplicationEntity applicationEntity;
-        try {
-            applicationEntity = EntityUtils.createEntity(message, messageContentType, messageTransferEncoding, false);
-        } catch (Exception e) {
-            throw new HttpException("Failed to create message entity", e);
-        }
+        ApplicationEntity<?> applicationEntity = buildApplicationEntity(message, messageContentType, messageTransferEncoding);
         switch (as2MessageStructure) {
             case PLAIN: {
                 // Add EDI Entity to main body of request.
@@ -380,6 +375,23 @@ public class AS2ClientManager {
         }
         httpContext.setAttribute(HTTP_RESPONSE, response);
         return httpContext;
+    }
+
+    private ApplicationEntity<?> buildApplicationEntity(Object message, ContentType messageContentType, String messageTransferEncoding) throws HttpException
+    {
+        ApplicationEntity<?> applicationEntity;
+        try {
+            if (message instanceof String) {
+                applicationEntity = EntityUtils.createEntity((String) message, messageContentType, messageTransferEncoding, false);
+            } else if (message instanceof byte[]) {
+                applicationEntity = EntityUtils.createEntity((byte[]) message, messageContentType, messageTransferEncoding, false);
+            } else {
+                throw new HttpException("Unsupported message entity type", null);
+            }
+        } catch (Exception e) {
+            throw new HttpException("Failed to create message entity", e);
+        }
+        return applicationEntity;
     }
 
     public AS2SignedDataGenerator createSigningGenerator(HttpCoreContext httpContext) throws HttpException {

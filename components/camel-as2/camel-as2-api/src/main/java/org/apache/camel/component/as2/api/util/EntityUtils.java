@@ -188,7 +188,7 @@ public final class EntityUtils {
         }
     }
 
-    public static ApplicationEntity createEntity(String message, ContentType messageContentType, String contentTransferEncoding, boolean isMainBody) throws Exception {
+    public static ApplicationEntity<String> createEntity(String message, ContentType messageContentType, String contentTransferEncoding, boolean isMainBody) throws Exception {
         Args.notNull(message, "Message");
         Args.notNull(messageContentType, "Message Content Type");
         String charset = messageContentType.getCharset() == null ? AS2Charset.US_ASCII : messageContentType.getCharset().toString();
@@ -207,10 +207,9 @@ public final class EntityUtils {
 
     }
 
-    public static ApplicationEntity createEntity(byte[] message, ContentType messageContentType, String contentTransferEncoding, boolean isMainBody) throws Exception {
+    public static ApplicationEntity<byte[]> createEntity(byte[] message, ContentType messageContentType, String contentTransferEncoding, boolean isMainBody) throws Exception {
         Args.notNull(message, "Message");
         Args.notNull(messageContentType, "Message Content Type");
-        String charset = messageContentType.getCharset() == null ? AS2Charset.US_ASCII : messageContentType.getCharset().toString();
         switch(messageContentType.getMimeType().toLowerCase()) {
             case AS2MediaType.APPLICATION_OCTET_STREAM:
                 return new ApplicationOctetStreamEntity(message, messageContentType, contentTransferEncoding, isMainBody);

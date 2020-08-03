@@ -22,7 +22,7 @@ public class ApplicationOctetStreamEntity extends ApplicationEntity<byte[]>
 	{
 		NoCloseOutputStream ncos = new NoCloseOutputStream(outstream);
 		try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, AS2Charset.US_ASCII);
-		     OutputStream transferEncodedStream = EntityUtils.encode(canonicalOutstream, getContentTransferEncodingValue())) {
+		     OutputStream transferEncodedStream = EntityUtils.encode(ncos, getContentTransferEncodingValue())) {
 
 			// Write out mime part headers if this is not the main body of message.
 			if (!isMainBody()) {
