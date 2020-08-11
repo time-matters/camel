@@ -59,8 +59,12 @@ import org.bouncycastle.cms.RecipientInformation;
 import org.bouncycastle.cms.RecipientInformationStore;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.operator.InputExpanderProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class EntityParser {
+
+    private static Logger LOG = LoggerFactory.getLogger(EntityParser.class.getName());
 
     private static final int DEFAULT_BUFFER_SIZE = 8 * 1024;
 
@@ -471,6 +475,7 @@ public final class EntityParser {
                         break;
                 }
             } catch (HttpException e) {
+                LOG.debug("", e);
                 throw e;
             } catch (Exception e) {
                 throw new HttpException("Failed to parse entity content", e);

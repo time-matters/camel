@@ -77,6 +77,8 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "TargetHostname": target.setTargetHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "targetportnumber":
         case "TargetPortNumber": target.setTargetPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "targetschema":
+        case "TargetSchema": target.setTargetSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "useragent":
         case "UserAgent": target.setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -115,6 +117,7 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         answer.put("Subject", java.lang.String.class);
         answer.put("TargetHostname", java.lang.String.class);
         answer.put("TargetPortNumber", java.lang.Integer.class);
+        answer.put("TargetSchema", java.lang.String.class);
         answer.put("UserAgent", java.lang.String.class);
         return answer;
     }
@@ -181,6 +184,8 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "TargetHostname": return target.getTargetHostname();
         case "targetportnumber":
         case "TargetPortNumber": return target.getTargetPortNumber();
+        case "targetschema":
+        case "TargetSchema": return target.getTargetSchema();
         case "useragent":
         case "UserAgent": return target.getUserAgent();
         default: return null;

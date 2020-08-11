@@ -533,6 +533,18 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * the scheme to use for the http connection.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: http
+         * Group: common
+         */
+        default AS2EndpointConsumerBuilder targetSchema(String targetSchema) {
+            doSetProperty("targetSchema", targetSchema);
+            return this;
+        }
+        /**
          * The value included in the User-Agent message header identifying the
          * AS2 user agent.
          * 
@@ -1632,6 +1644,18 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * the scheme to use for the http connection.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: http
+         * Group: common
+         */
+        default AS2EndpointProducerBuilder targetSchema(String targetSchema) {
+            doSetProperty("targetSchema", targetSchema);
+            return this;
+        }
+        /**
          * The value included in the User-Agent message header identifying the
          * AS2 user agent.
          * 
@@ -2240,6 +2264,18 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder targetPortNumber(String targetPortNumber) {
             doSetProperty("targetPortNumber", targetPortNumber);
+            return this;
+        }
+        /**
+         * the scheme to use for the http connection.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: http
+         * Group: common
+         */
+        default AS2EndpointBuilder targetSchema(String targetSchema) {
+            doSetProperty("targetSchema", targetSchema);
             return this;
         }
         /**

@@ -65,6 +65,9 @@ public class AS2Configuration {
     @UriParam
     private Integer targetPortNumber = 80;
 
+    @UriParam(defaultValue = "http")
+    private String targetSchema = "http";
+
     @UriParam(defaultValue = "camel.apache.org")
     private String clientFqdn = "camel.apache.org";
 
@@ -224,6 +227,19 @@ public class AS2Configuration {
      */
     public void setTargetPortNumber(Integer targetPortNumber) {
         this.targetPortNumber = targetPortNumber;
+    }
+
+    public String getTargetSchema()
+    {
+        return targetSchema;
+    }
+
+    /**
+     * the scheme to use for the http connection
+     */
+    public void setTargetSchema(String targetSchema)
+    {
+        this.targetSchema = targetSchema;
     }
 
     public String getClientFqdn() {

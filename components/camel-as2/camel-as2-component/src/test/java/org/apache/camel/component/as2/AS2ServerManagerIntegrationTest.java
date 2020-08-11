@@ -93,6 +93,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
     private static final String METHOD = "POST";
     private static final String TARGET_HOST = "localhost";
     private static final int TARGET_PORT = 8888;
+    private static final String TARGET_SCHEMA = "http";
     private static final String AS2_VERSION = "1.1";
     private static final String USER_AGENT = "Camel AS2 Endpoint";
     private static final String REQUEST_URI = "/";
@@ -182,7 +183,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
 
     @Test
     public void receivePlainEDIMessageTest() throws Exception {
-        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
@@ -238,7 +239,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
 
     @Test
     public void receivePlainXMLMessageTest() throws Exception {
-        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(XML_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
@@ -295,7 +296,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
     @Test
     public void receiveEDIMultipartSignedMessageTest() throws Exception {
 
-        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED,
@@ -366,7 +367,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
     @Test
     public void receiveXMLMultipartSignedMessageTest() throws Exception {
 
-        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(XML_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED,
@@ -436,7 +437,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
 
     @Test
     public void receiveEDIEnvelopedMessageTest() throws Exception {
-        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.ENCRYPTED,
@@ -496,7 +497,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
 
     @Test
     public void receiveXMLEnvelopedMessageTest() throws Exception {
-        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(XML_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.ENCRYPTED,
@@ -556,7 +557,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
 
     @Test
     public void sendEditMessageToFailingProcessorTest() throws Exception {
-        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         HttpCoreContext context = clientManager.send(EDI_MESSAGE, "/process_error", SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,

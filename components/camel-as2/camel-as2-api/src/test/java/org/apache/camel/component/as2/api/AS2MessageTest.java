@@ -122,6 +122,7 @@ public class AS2MessageTest {
     private static final String METHOD = "POST";
     private static final String TARGET_HOST = "localhost";
     private static final int TARGET_PORT = AvailablePortFinder.getNextAvailable();
+    private static final String TARGET_SCHEMA = "http";
     private static final String RECIPIENT_DELIVERY_ADDRESS = "http://localhost:" + TARGET_PORT + "/handle-receipts";
     private static final String AS2_VERSION = "1.1";
     private static final String USER_AGENT = "Camel AS2 Endpoint";
@@ -242,7 +243,7 @@ public class AS2MessageTest {
     @Test
     public void plainEDIMessageTest() throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
-                TARGET_HOST, TARGET_PORT);
+                TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
@@ -278,7 +279,7 @@ public class AS2MessageTest {
     @Test
     public void multipartSignedMessageTest() throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
-                TARGET_HOST, TARGET_PORT);
+                TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
@@ -426,7 +427,7 @@ public class AS2MessageTest {
 
     public void envelopedMessageTest(AS2EncryptionAlgorithm encryptionAlgorithm) throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
-                TARGET_HOST, TARGET_PORT);
+                TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
         LOG.info("Key Algoritm: " + signingKP.getPrivate().getAlgorithm());
@@ -478,7 +479,7 @@ public class AS2MessageTest {
 
     public void envelopedAndSignedMessageTest(AS2EncryptionAlgorithm encryptionAlgorithm) throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
-                TARGET_HOST, TARGET_PORT);
+                TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
         LOG.info("Key Algoritm: " + signingKP.getPrivate().getAlgorithm());
@@ -541,7 +542,7 @@ public class AS2MessageTest {
     @Test
     public void signatureVerificationTest() throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
-                TARGET_HOST, TARGET_PORT);
+                TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
@@ -570,7 +571,7 @@ public class AS2MessageTest {
     @Test
     public void mdnMessageTest() throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
-                TARGET_HOST, TARGET_PORT);
+                TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
@@ -670,7 +671,7 @@ public class AS2MessageTest {
     @Test
     public void compressedMessageTest() throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
-                TARGET_HOST, TARGET_PORT);
+                TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
         LOG.info("Key Algoritm: " + signingKP.getPrivate().getAlgorithm());
@@ -719,7 +720,7 @@ public class AS2MessageTest {
     @Test
     public void compressedAndSignedMessageTest() throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
-                TARGET_HOST, TARGET_PORT);
+                TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
         LOG.info("Key Algoritm: " + signingKP.getPrivate().getAlgorithm());
@@ -779,7 +780,7 @@ public class AS2MessageTest {
     @Test
     public void envelopedAndCompressedMessageTest() throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
-                TARGET_HOST, TARGET_PORT);
+                TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
         LOG.info("Key Algoritm: " + signingKP.getPrivate().getAlgorithm());
@@ -832,7 +833,7 @@ public class AS2MessageTest {
     @Test
     public void envelopedCompressedAndSignedMessageTest() throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
-                TARGET_HOST, TARGET_PORT);
+                TARGET_HOST, TARGET_PORT, TARGET_SCHEMA);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
         LOG.info("Key Algoritm: " + signingKP.getPrivate().getAlgorithm());

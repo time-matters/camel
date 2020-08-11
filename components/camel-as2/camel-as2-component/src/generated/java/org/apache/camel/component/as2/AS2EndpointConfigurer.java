@@ -104,6 +104,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "targetHostname": target.getConfiguration().setTargetHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "targetportnumber":
         case "targetPortNumber": target.getConfiguration().setTargetPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "targetschema":
+        case "targetSchema": target.getConfiguration().setTargetSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
@@ -163,6 +165,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         answer.put("synchronous", boolean.class);
         answer.put("targetHostname", java.lang.String.class);
         answer.put("targetPortNumber", java.lang.Integer.class);
+        answer.put("targetSchema", java.lang.String.class);
         answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
         answer.put("useFixedDelay", boolean.class);
         answer.put("userAgent", java.lang.String.class);
@@ -258,6 +261,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "targetHostname": return target.getConfiguration().getTargetHostname();
         case "targetportnumber":
         case "targetPortNumber": return target.getConfiguration().getTargetPortNumber();
+        case "targetschema":
+        case "targetSchema": return target.getConfiguration().getTargetSchema();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":

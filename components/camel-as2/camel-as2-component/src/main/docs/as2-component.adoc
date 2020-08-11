@@ -84,7 +84,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (49 parameters):
+=== Query Parameters (50 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -116,6 +116,7 @@ with the following path and query parameters:
 | *subject* (common) | The value of Subject header of AS2 message. |  | String
 | *targetHostname* (common) | The host name (IP or DNS name) of target host. |  | String
 | *targetPortNumber* (common) | The port number of target host. -1 indicates the scheme default port. |  | Integer
+| *targetSchema* (common) | the scheme to use for the http connection | http | String
 | *userAgent* (common) | The value included in the User-Agent message header identifying the AS2 user agent. | Camel AS2 Client Endpoint | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
