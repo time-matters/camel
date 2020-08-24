@@ -21,11 +21,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
@@ -61,6 +64,7 @@ import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.operator.InputExpanderProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.nio.cs.UTF_8;
 
 public final class EntityParser {
 
@@ -417,6 +421,14 @@ public final class EntityParser {
      * @throws HttpException when things go wrong.
      */
     public static void parseAS2MessageEntity(HttpMessage message) throws HttpException {
+
+        Header[] allHeaders = message.getAllHeaders();
+        if (allHeaders != null) {
+
+            List<String> headerList = Arrays.stream(allHeaders).map(header -> header.getName() + "\"\\n " + header.getValue() + " ").collect(Collectors.toList());
+            LOG.debug("headers: " + String.join("\n ", headerList));
+        }
+
         if (EntityUtils.hasEntity(message)) {
             HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
@@ -918,13 +930,26 @@ public final class EntityParser {
             CharsetDecoder charsetDecoder = charset.newDecoder();
 
             inbuffer.setCharsetDecoder(charsetDecoder);
+            LOG.debug(String.format("using charset %s from %s", charset, (contentType.getCharset() == null ? "default" : "request")));
 
-            String pkcs7EncryptedBodyContent = parseBodyPartText(inbuffer, boundary);
+            String pkcs7EncryptedBodyContent = null;
+            try {
+                pkcs7EncryptedBodyContent = parseBodyPartText(inbuffer, boundary);
+            } catch (Exception e) {
+                // try again with UTF-8 encoding for clients that don't send any charset information
+                inbuffer.setCharsetDecoder(StandardCharsets.UTF_8.newDecoder());
+                pkcs7EncryptedBodyContent = parseBodyPartText(inbuffer, boundary);
+            }
 
+            LOG.debug("received encrypted body content: " + pkcs7EncryptedBodyContent);
             byte[] encryptedContent = EntityUtils.decode(pkcs7EncryptedBodyContent.getBytes(charset), contentTransferEncoding);
 
+            LOG.debug("decoded payload: " + new String(encryptedContent, charset));
             ApplicationPkcs7MimeEnvelopedDataEntity applicationPkcs7MimeEntity = new ApplicationPkcs7MimeEnvelopedDataEntity(
                     encryptedContent, contentTransferEncoding, false);
+
+            LOG.debug("parsed entity");
+
             return applicationPkcs7MimeEntity;
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse PKCS7 Mime entity");
